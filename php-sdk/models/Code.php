@@ -2,7 +2,10 @@
 
 class Code
 {
-    private  $api_url,  $MainInst, $auth, $basePostOptions;
+    private $api_url;
+    private $MainInst;
+    private $auth;
+    private $basePostOptions;
     /**
      * Initializes Code class to manage creation and deletion of data for QR Code generation
      *
@@ -24,7 +27,7 @@ class Code
         ];
     }
 
-    function create($data = [])
+    public function create($data = [])
     {
         $url = $this->api_url . $this->MainInst->GetEndpoint('CODE');
         $options = $this->basePostOptions;
@@ -46,7 +49,7 @@ class Code
      * @param String $codeId
      * @return mixed
      */
-    function deleteCode($codeId)
+    public function deleteCode($codeId)
     {
         return HttpDelete($this->api_url . $this->MainInst->GetEndpoint('CODE') . "/$codeId", [], $this->basePostOptions);
     }
@@ -57,15 +60,15 @@ class Code
      * @param String $merchantPaymentId The unique payment transaction id provided by merchant
      * @return mixed
      */
-    function getPaymentDetails($merchantPaymentId)
+    public function getPaymentDetails($merchantPaymentId)
     {
         $url = $this->api_url . $this->MainInst->GetEndpoint('CODE') . $this->MainInst->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
-        return HttpGet($url, false, $this->basePostOptions);
+        return HttpGet($url, [], $this->basePostOptions);
     }
 
     /**
      * Cancel a payment:
-     * This method is used in case, while creating a payment, the client can not determine the status of the payment. 
+     * This method is used in case, while creating a payment, the client can not determine the status of the payment.
      * For example, client get timeout or the response cannot contain the information to indicate the exact payment status.
      * By calling this api, if accepted, the OPA will guarantee the money eventually goes back to user's account.
      * Note: The Cancel API can be used until 00:14:59 AM the day after the Payment has happened.
@@ -73,15 +76,15 @@ class Code
      * @param String $merchantPaymentId The unique payment transaction id provided by merchant
      * @return void
      */
-    function cancelPayment($merchantPaymentId)
+    public function cancelPayment($merchantPaymentId)
     {
         $url=$this->api_url.$this->MainInst->GetEndpoint("PAYMENT")."/$merchantPaymentId";
-        return HttpDelete($url,[],$this->basePostOptions);
+        return HttpDelete($url, [], $this->basePostOptions);
     }
 
-    function capturePayment($data = [], $kwargs)
+    public function capturePayment($data = [], $kwargs)
     {
-        /*         
+        /*
         $api_url = $this->api_url;
         $url = "$api_url/payments/capture";
         $data['requestedAt'] = datetime . datetime . now() . second;
@@ -89,16 +92,16 @@ class Code
          */
     }
 
-    function revertPayment($data = [], $kwargs)
+    public function revertPayment($data = [], $kwargs)
     {
-        /*         
+        /*
         $url = "{}/{}/{}" . format('payments', 'preauthorize', 'revert');
         $data['requestedAt'] = datetime . datetime . now() . second;
         return $this->post_url($url, $data, $kwargs);
          */
     }
 
-    function refundPayment($data = [], $kwargs)
+    public function refundPayment($data = [], $kwargs)
     {
         /*         $url = "/{}" . format('refunds');
         $data['requestedAt'] = datetime . datetime . now() . second;
@@ -106,7 +109,7 @@ class Code
  */
     }
 
-    function refundDetails($data = [], $kwargs)
+    public function refundDetails($data = [], $kwargs)
     {
         /*   $url = "/{}" . format('refunds');
         return $this->fetch($url, $data, $kwargs); */
