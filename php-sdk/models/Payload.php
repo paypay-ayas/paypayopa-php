@@ -1,19 +1,24 @@
 <?php
 class Payload
 {
-    private $merchantPaymentId = null;
-    private $requestedAt = null;
-    private $amount = null;
-    private $codeType = null;
+    private $merchantPaymentId;
+    private $merchantCaptureId;
+    private $merchantRevertId;
+    private $merchantRefundId;
+    private $requestedAt;
+    private $amount;
+    private $codeType;
     private $orderItems = [];
-    private $redirectType = null;
-    private $redirectUrl = null;
-    private $orderDescription = null;
-    private $storeInfo = null;
-    private $storeId = null;
-    private $terminalId = null;
-    private $isAuthorization = null;
-    private $authorizationExpiry = null;
+    private $redirectType;
+    private $redirectUrl;
+    private $orderDescription;
+    private $storeInfo;
+    private $storeId;
+    private $terminalId;
+    private $isAuthorization;
+    private $authorizationExpiry;
+    private $reason;
+
 
 
     function set_merchant_payment_id($merchant_payment_id)
@@ -24,6 +29,37 @@ class Payload
     function get_merchant_payment_id()
     {
         return $this->merchantPaymentId;
+    }
+
+    function set_merchant_capture_id($merchant_capture_id)
+    {
+        $this->merchantCaptureId = $merchant_capture_id;
+    }
+
+    function get_merchant_capture_id()
+    {
+        return $this->merchantCaptureId;
+    }
+
+
+    function set_merchant_revert_id($merchant_revert_id)
+    {
+        $this->merchantRevertId = $merchant_revert_id;
+    }
+
+    function get_merchant_revert_id()
+    {
+        return $this->merchantRevertId;
+    }
+
+    function set_merchant_refund_id($merchant_refund_id)
+    {
+        $this->merchantRefundId = $merchant_refund_id;
+    }
+
+    function get_merchant_refund_id()
+    {
+        return $this->merchantRefundId;
     }
 
     function set_amount($amount)
@@ -90,5 +126,13 @@ class Payload
     function get_redirect_url()
     {
         return $this->redirectUrl;
+    }
+    function set_reason($reason)
+    {
+        $this->reason = $reason;
+    }
+    function get_reason()
+    {
+        return $this->reason;
     }
 }

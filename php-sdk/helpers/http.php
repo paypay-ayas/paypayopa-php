@@ -1,4 +1,14 @@
 <?php
+/**
+ * Makes Http Request calls
+ *
+ * @param String $method Type of HTTP request
+ * @param String $url Request URL
+ * @param boolean $URLparams URL/GET Parameters to added
+ * @param boolean $body Request Body/POST Payload 
+ * @param array $options Request options
+ * @return void
+ */
 function HttpRequest($method, $url, $URLparams = false, $body = false, $options = [])
 {
     $curl = curl_init();
