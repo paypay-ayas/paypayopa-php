@@ -3,6 +3,7 @@
 // Set API access
 require_once('init_client.php');
 
+
 // Identify merchant
 // $client->payload->set_merchant_payment_id("669cd50c-8306-11ea-bc55-0242ac130003");
 $client->payload->set_merchant_payment_id(uniqid());
@@ -13,16 +14,6 @@ $client->payload->set_code_type("ORDER_QR");
 
 // Provide order details for invoicing
 $order_items = [
-    [
-        "name" => "Carrot cake",
-        "category" => "pasteries",
-        "productId" => "21345",
-        "quantity" => 1,
-        "unitPrice" => [
-            "amount" => 1,
-            "currency" => "JPY"
-        ]
-    ],
     [
         "name" => "Moon Cake",
         "quantity" => 1,
@@ -39,19 +30,19 @@ $client->payload->set_order_items($order_items);
 
 // Save Cart totals
 $amount = [
-    "amount" => 2,
+    "amount" => 1,
     "currency" => "JPY"
 ];
 $client->payload->set_amount($amount);
-
+$srvName = $_SERVER['SERVER_NAME'];
 // Configure redirects
 $client->payload->set_redirect_type('WEB_LINK');
-$client->payload->set_redirect_url('http://foobar.com');
+$client->payload->set_redirect_url('$srvName');
 
 
 // Get data for QR code
 $resp = $client->code->create();
-$resp = json_decode($resp, true);
+
 $data = $resp['data'];
 
 ?>
@@ -75,6 +66,9 @@ $data = $resp['data'];
         <div class="row">
             <div class="col-md-8">
                 <h1> Order Created</h1>
+                <textarea name="" id="" cols="30" rows="10">
+                    <?= json_encode($resp) ?>
+                </textarea>
                 <iframe src="<?= $data['url'] ?>" width="100%" height="1024px" frameborder="0"></iframe>
 
             </div>

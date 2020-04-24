@@ -15,7 +15,7 @@ class Payload
     private $storeInfo;
     private $storeId;
     private $terminalId;
-    private $isAuthorization;
+    private $isAuthorization=false;
     private $authorizationExpiry;
     private $reason;
 
@@ -28,6 +28,7 @@ class Payload
 
     function get_merchant_payment_id()
     {
+        $this->ValidateOne('merchantPaymentId');
         return $this->merchantPaymentId;
     }
 
@@ -38,6 +39,7 @@ class Payload
 
     function get_merchant_capture_id()
     {
+        $this->ValidateOne('merchantCaptureId');
         return $this->merchantCaptureId;
     }
 
@@ -49,6 +51,7 @@ class Payload
 
     function get_merchant_revert_id()
     {
+        $this->ValidateOne('merchantRevertId');
         return $this->merchantRevertId;
     }
 
@@ -59,6 +62,7 @@ class Payload
 
     function get_merchant_refund_id()
     {
+        $this->ValidateOne('merchantRefundId');
         return $this->merchantRefundId;
     }
 
@@ -69,6 +73,7 @@ class Payload
 
     function get_amount()
     {
+        $this->ValidateOne('amount');
         return $this->amount;
     }
     function set_requested_at($requested_at = false)
@@ -77,6 +82,7 @@ class Payload
     }
     function get_requested_at()
     {
+        $this->ValidateOne('requestedAt');
         return $this->requestedAt;
     }
     function set_code_type($code_type)
@@ -85,6 +91,7 @@ class Payload
     }
     function get_code_type()
     {
+        $this->ValidateOne('codeType');
         return $this->codeType;
     }
     function set_order_items($order_items = [])
@@ -93,6 +100,7 @@ class Payload
     }
     function get_order_items()
     {
+        $this->ValidateOne('orderItems');
         return $this->orderItems;
     }
     function set_order_description($order_description)
@@ -101,6 +109,7 @@ class Payload
     }
     function get_order_description()
     {
+        $this->ValidateOne('orderDescription');
         return $this->orderDescription;
     }
     function set_store_id($store_id)
@@ -109,14 +118,17 @@ class Payload
     }
     function get_store_id()
     {
+        $this->ValidateOne('storeId');
         return $this->storeId;
     }
     function set_redirect_type($redirect_type)
     {
+        
         $this->redirectType = $redirect_type;
     }
     function get_redirect_type()
     {
+        $this->ValidateOne('redirectType');
         return $this->redirectType;
     }
     function set_redirect_url($redirect_url)
@@ -125,6 +137,7 @@ class Payload
     }
     function get_redirect_url()
     {
+        $this->ValidateOne('redirectUrl');
         return $this->redirectUrl;
     }
     function set_reason($reason)
@@ -133,6 +146,24 @@ class Payload
     }
     function get_reason()
     {
+        $this->ValidateOne('reason');
         return $this->reason;
+    }
+
+    function set_authorization($isAuth)
+    {
+        $this->isAuthorization = $isAuth;
+    }
+    function get_authorization()
+    {
+        $this->ValidateOne('isAuthorization');
+        return $this->isAuthorization;
+    }
+
+    private function ValidateOne($entryName)
+    {
+        if (!isset($this->$entryName)) {
+            throw new Exception("Payload value $entryName not set.");
+        }
     }
 }

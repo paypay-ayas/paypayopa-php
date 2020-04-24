@@ -1,7 +1,10 @@
 <?php
 require_once('init_client.php');
-$resp =  $client->code->getPaymentDetails($_GET['id']);
-$resp = json_decode($resp, true);
+$id=$_GET['id'];
+if (!isset($id)) {
+    throw new Exception("Invalid id", 1);
+}
+$resp =  $client->code->getPaymentDetails($id);
 $data = $resp['data']
 ?>
 <!DOCTYPE html>
@@ -49,8 +52,7 @@ $data = $resp['data']
     </div>
     <h5>Refunds</h5>
     <div class="btn-group" role="group" aria-label="Basic example">
-        <a target="_blank" class="btn btn-warning">Refund Payment</a>
-        <a target="_blank" class="btn btn-info">Refund Details </a>
+        <a target="_blank" href="refund.php?id=<?=$id?>" class="btn btn-warning">Refund Payment</a>        
     </div>
 </body>
 

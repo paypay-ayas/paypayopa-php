@@ -35,7 +35,8 @@ class Code
      */
     public function create($dataOverride = [])
     {
-        $url = $this->api_url . $this->MainInst->GetEndpoint('CODE');
+        $main = $this->MainInst;
+        $url = $this->api_url . $main->GetEndpoint('CODE');
         $options = $this->basePostOptions;
         $options['CURLOPT_TIMEOUT'] = 30;
         $data = [];
@@ -47,7 +48,7 @@ class Code
         $data['redirectUrl'] = $this->MainInst->payload->get_redirect_url();
         $data['requestedAt'] = $this->MainInst->payload->get_requested_at() ? $this->MainInst->payload->get_requested_at() : time();
         $data = array_merge($data, $dataOverride);
-        return HttpPost($url, $data, $options);
+        return json_decode(HttpPost($url, $data, $options), true);
     }
 
     /**
@@ -58,7 +59,8 @@ class Code
      */
     public function deleteCode($codeId)
     {
-        return HttpDelete($this->api_url . $this->MainInst->GetEndpoint('CODE') . "/$codeId", [], $this->basePostOptions);
+        $main = $this->MainInst;
+        return json_decode(HttpDelete($this->api_url . $main->GetEndpoint('CODE') . "/$codeId", [], $this->basePostOptions), true);
     }
 
     /**
@@ -69,8 +71,9 @@ class Code
      */
     public function getPaymentDetails($merchantPaymentId)
     {
-        $url = $this->api_url . $this->MainInst->GetEndpoint('CODE') . $this->MainInst->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
-        return HttpGet($url, [], $this->basePostOptions);
+        $main = $this->MainInst;
+        $url = $this->api_url . $main->GetEndpoint('CODE') . $main->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
+        return json_decode(HttpGet($url, [], $this->basePostOptions), true);
     }
 
     /**
@@ -85,8 +88,9 @@ class Code
      */
     public function cancelPayment($merchantPaymentId)
     {
-        $url = $this->api_url . $this->MainInst->GetEndpoint("PAYMENT") . "/$merchantPaymentId";
-        return HttpDelete($url, [], $this->basePostOptions);
+        $main = $this->MainInst;
+        $url = $this->api_url . $main->GetEndpoint("PAYMENT") . "/$merchantPaymentId";
+        return json_decode(HttpDelete($url, [], $this->basePostOptions), true);
     }
 
     /**
@@ -110,7 +114,7 @@ class Code
         $data["requestedAt"] = $main->payload->get_requested_at();
         $data["orderDescription"] = $main->payload->get_order_description();
         $data = array_merge($data, $dataOverride);
-        return HttpPost($url, $data, $options);
+        return json_decode(HttpPost($url, $data, $options), true);
     }
 
     /**
@@ -134,7 +138,7 @@ class Code
         $data["requestedAt"] = $main->payload->get_requested_at();
         $data["reason"] = $main->payload->get_reason();
         $data = array_merge($data, $dataOverride);
-        return HttpPost($url, $data, $options);
+        return json_decode(HttpPost($url, $data, $options), true);
     }
 
     /**
@@ -146,7 +150,7 @@ class Code
     public function refundPayment($dataOverride = [])
     {
         $main = $this->MainInst;
-        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('PAYMENT_PREAUTH') . "/revert";
+        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND');
         $options = $this->basePostOptions;
         $options['CURLOPT_TIMEOUT'] = 30;
         $data = [];
@@ -156,19 +160,18 @@ class Code
         $data["requestedAt"] = $main->payload->get_requested_at();
         $data["reason"] = $main->payload->get_reason();
         $data = array_merge($data, $dataOverride);
-        return HttpPost($url, $data, $options);
+        return json_decode(HttpPost($url, $data, $options), true);
     }
 
     /**
      * Get refund details.
-     *
      * @param String $merchantRefundId The unique refund transaction id provided by merchant
      * @return void
      */
     public function refundDetails($merchantRefundId)
     {
         $main = $this->MainInst;
-        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND')."/$merchantRefundId";
-        return HttpGet($url, [], $this->basePostOptions);
+        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND') . "/$merchantRefundId";
+        return json_decode(HttpGet($url, [], $this->basePostOptions), true);
     }
 }
