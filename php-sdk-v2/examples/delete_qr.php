@@ -1,7 +1,7 @@
 <?php
 require_once('init_client.php');
 
-$resp =  $client->code->deleteCode($_GET['id']);
+$resp =  $client->code->delete($_GET['id']);
 
 ?>
 <pre>

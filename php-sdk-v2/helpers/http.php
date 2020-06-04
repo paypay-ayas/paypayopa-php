@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Makes Http Request calls
  *
@@ -14,7 +15,7 @@ function HttpRequest($method, $url, $URLparams = false, $body = false, $options 
     $curl = curl_init();
     curl_setopt($curl, CURLINFO_HEADER_OUT, true);
     if ($URLparams) {
-        $url .= "?".http_build_query($URLparams);
+        $url .= "?" . http_build_query($URLparams);
     }
     curl_setopt($curl, CURLOPT_URL, $url);
     foreach ($options as $OptName => $OptValue) {
@@ -58,9 +59,11 @@ function HttpRequest($method, $url, $URLparams = false, $body = false, $options 
         case 'DELETE':
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);            
-            curl_setopt($curl, CURLOPT_POST, count($body));
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            if (count($body) > 0) {
+                curl_setopt($curl, CURLOPT_POST, count($body));
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+            }
             $response = curl_exec($curl);
             break;
 
@@ -68,14 +71,14 @@ function HttpRequest($method, $url, $URLparams = false, $body = false, $options 
             throw new Exception("Invalid HTTP Request");
             break;
     }
-    if (!$response||curl_errno($curl)) {
+    if (!$response || curl_errno($curl)) {
         throw new Exception("Invalid response from Server " . curl_error($curl));
     }
-    
+
     curl_close($curl);
     return $response;
 }
-function HttpGet($url, $params=false, $options = [])
+function HttpGet($url, $params = false, $options = [])
 {
     return HttpRequest('GET', $url, $params, false, $options);
 }

@@ -6,5 +6,5 @@ if (!isset($id)) {
 }
 
 header("content-type: application/json");
-echo json_encode($client->code->refundDetails($id));
+echo json_encode($client->refund->getDetails($id));
 

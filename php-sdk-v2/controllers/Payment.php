@@ -1,11 +1,10 @@
 <?php
-
-class Code
-{
-    private $api_url;
+use PaypaySdk\Controller;
+class Payment extends Controller {
+    /* private $api_url;
     private $MainInst;
     private $auth;
-    private $basePostOptions;
+    private $basePostOptions; */
     /**
      * Initializes Code class to manage creation and deletion of data for QR Code generation
      *
@@ -14,62 +13,28 @@ class Code
      */
     public function __construct($MainInstance, $auth)
     {
+        parent::__construct($MainInstance,$auth);
         $this->MainInst = $MainInstance;
         $this->api_url = $this->MainInst->getConfig('API_URL');
         $this->auth = $auth;
-        $basicAuthStr = HttpBasicAuthStr($this->auth['API_KEY'], $this->auth['API_SECRET']);
+        $AuthStr = HttpBasicAuthStr($this->auth['API_KEY'], $this->auth['API_SECRET']);
         $this->basePostOptions = [
             'CURLOPT_TIMEOUT' => 15,
             'HEADERS' => [
                 'Content-Type' => 'application/json',
-                'Authorization' => $basicAuthStr
+                'Authorization' => $AuthStr
             ]
         ];
-    }
 
-    /**
-     * Create a QR Code to receive payments.
-     *
-     * @param array $dataOverride Payload request array.
-     * @return mixed
-     */
-    public function create($dataOverride = [])
-    {
-        $main = $this->MainInst;
-        $url = $this->api_url . $main->GetEndpoint('CODE');
-        $options = $this->basePostOptions;
-        $options['CURLOPT_TIMEOUT'] = 30;
-        $data = [];
-        $data['merchantPaymentId'] = $this->MainInst->payload->get_merchant_payment_id();
-        $data['codeType'] = $this->MainInst->payload->get_code_type();
-        $data['amount'] = $this->MainInst->payload->get_amount();
-        $data['orderItems'] = $this->MainInst->payload->get_order_items();
-        $data['redirectType'] = $this->MainInst->payload->get_redirect_type();
-        $data['redirectUrl'] = $this->MainInst->payload->get_redirect_url();
-        $data['requestedAt'] = $this->MainInst->payload->get_requested_at() ? $this->MainInst->payload->get_requested_at() : time();
-        $data = array_merge($data, $dataOverride);
-        return json_decode(HttpPost($url, $data, $options), true);
     }
-
-    /**
-     * Invalidates QR Code for payment
-     *
-     * @param String $codeId
-     * @return mixed
-     */
-    public function deleteCode($codeId)
-    {
-        $main = $this->MainInst;
-        return json_decode(HttpDelete($this->api_url . $main->GetEndpoint('CODE') . "/$codeId", [], $this->basePostOptions), true);
-    }
-
+    
     /**
      * Fetches Payment details
      *
      * @param String $merchantPaymentId The unique payment transaction id provided by merchant
      * @return mixed
      */
-    public function getPaymentDetails($merchantPaymentId)
+    public function getDetails($merchantPaymentId)
     {
         $main = $this->MainInst;
         $url = $this->api_url . $main->GetEndpoint('CODE') . $main->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
@@ -86,7 +51,7 @@ class Code
      * @param String $merchantPaymentId The unique payment transaction id provided by merchant
      * @return void
      */
-    public function cancelPayment($merchantPaymentId)
+    public function cancel($merchantPaymentId)
     {
         $main = $this->MainInst;
         $url = $this->api_url . $main->GetEndpoint("PAYMENT") . "/$merchantPaymentId";
@@ -101,7 +66,7 @@ class Code
      * @param array $dataOverride Payload request array.
      * @return void
      */
-    public function capturePayment($dataOverride = [])
+    public function capture($dataOverride = [])
     {
         $main = $this->MainInst;
         $url = $main->GetConfig('API_URL') . $main->GetEndpoint('PAYMENT') . "/capture";
@@ -126,7 +91,7 @@ class Code
      * @param array $dataOverride Payload request array.
      * @return mixed
      */
-    public function revertPayment($dataOverride = [])
+    public function revert($dataOverride = [])
     {
         $main = $this->MainInst;
         $url = $main->GetConfig('API_URL') . $main->GetEndpoint('PAYMENT') . "/capture";
@@ -141,37 +106,4 @@ class Code
         return json_decode(HttpPost($url, $data, $options), true);
     }
 
-    /**
-     * Refund a payment
-     *
-     * @param array $dataOverride Payload request array.
-     * @return void
-     */
-    public function refundPayment($dataOverride = [])
-    {
-        $main = $this->MainInst;
-        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND');
-        $options = $this->basePostOptions;
-        $options['CURLOPT_TIMEOUT'] = 30;
-        $data = [];
-        $data["merchantRefundId"] = $main->payload->get_merchant_revert_id();
-        $data["paymentId"] = $main->payload->get_merchant_payment_id();
-        $data["amount"] = $main->payload->get_amount();
-        $data["requestedAt"] = $main->payload->get_requested_at();
-        $data["reason"] = $main->payload->get_reason();
-        $data = array_merge($data, $dataOverride);
-        return json_decode(HttpPost($url, $data, $options), true);
-    }
-
-    /**
-     * Get refund details.
-     * @param String $merchantRefundId The unique refund transaction id provided by merchant
-     * @return void
-     */
-    public function refundDetails($merchantRefundId)
-    {
-        $main = $this->MainInst;
-        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND') . "/$merchantRefundId";
-        return json_decode(HttpGet($url, [], $this->basePostOptions), true);
-    }
 }

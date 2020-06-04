@@ -4,7 +4,7 @@ $id=$_GET['id'];
 if (!isset($id)) {
     throw new Exception("Invalid id", 1);
 }
-$resp =  $client->code->getPaymentDetails($id);
+$resp =  $client->payment->getDetails($id);
 $data = $resp['data']
 ?>
 <!DOCTYPE html>

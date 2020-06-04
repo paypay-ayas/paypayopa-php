@@ -13,7 +13,7 @@ $amount = [
 $client->payload->set_amount($amount);
 $client->payload->set_requested_at();
 $client->payload->set_reason("Refunds test");
-$resp = $client->code->refundPayment();
+$resp = $client->refund->create();
 $data = $resp['data'];
 ?>
 

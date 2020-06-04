@@ -34,10 +34,9 @@ $amount = [
     "currency" => "JPY"
 ];
 $client->payload->set_amount($amount);
-$srvName = $_SERVER['SERVER_NAME'];
 // Configure redirects
 $client->payload->set_redirect_type('WEB_LINK');
-$client->payload->set_redirect_url('$srvName');
+$client->payload->set_redirect_url($_SERVER['SERVER_NAME']);
 
 
 // Get data for QR code

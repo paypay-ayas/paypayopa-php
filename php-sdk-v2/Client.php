@@ -1,12 +1,18 @@
 <?php
 
-include('models/Payload.php');
-include('models/Code.php');
-include('helpers/http.php');
+include(__DIR__.'/Controller.php');
+include(__DIR__.'/models/Payload.php');
+include(__DIR__.'/controllers/Code.php');
+include(__DIR__.'/controllers/Payment.php');
+include(__DIR__.'/controllers/Refund.php');
+include(__DIR__.'/controllers/User.php');
+include(__DIR__.'/helpers/http.php');
+include(__DIR__.'/helpers/utility_hmac.php');
 class Client
 {
     private $auth, $config, $endpoints;
-    public $payload, $code;
+    public $payload; 
+    public $code,$payment,$refund,$user;
 
     /**
      * Initialize a Client object with session,
@@ -25,6 +31,9 @@ class Client
         $this->endpoints = $endpoint;
         $this->payload = new Payload();
         $this->code = new Code($this, $auth);
+        $this->payment = new Payment($this, $auth);
+        $this->refund = new Refund($this, $auth);
+        $this->user = new User($this, $auth);
     }
 
     /**
