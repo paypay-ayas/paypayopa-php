@@ -39,22 +39,28 @@ function HttpRequest($method, $url, $URLparams = false, $body = false, $options 
             break;
         case 'POST':
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POST, count($body));
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+            if (count($body) > 0) {
+                curl_setopt($curl, CURLOPT_POST, count($body));
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+            }
             $response = curl_exec($curl);
             break;
         case 'PATCH':
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POST, count($body));
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+            if (count($body) > 0) {
+                curl_setopt($curl, CURLOPT_POST, count($body));
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+            }
             $response = curl_exec($curl);
             break;
         case 'PUT':
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POST, count($body));
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+            if (count($body) > 0) {
+                curl_setopt($curl, CURLOPT_POST, count($body));
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+            }
             break;
         case 'DELETE':
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);

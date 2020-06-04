@@ -1,10 +1,10 @@
 <?php
+
 use PaypaySdk\Controller;
-class Payment extends Controller {
-    /* private $api_url;
-    private $MainInst;
-    private $auth;
-    private $basePostOptions; */
+
+class Payment extends Controller
+{
+
     /**
      * Initializes Code class to manage creation and deletion of data for QR Code generation
      *
@@ -13,21 +13,9 @@ class Payment extends Controller {
      */
     public function __construct($MainInstance, $auth)
     {
-        parent::__construct($MainInstance,$auth);
-        $this->MainInst = $MainInstance;
-        $this->api_url = $this->MainInst->getConfig('API_URL');
-        $this->auth = $auth;
-        $AuthStr = HttpBasicAuthStr($this->auth['API_KEY'], $this->auth['API_SECRET']);
-        $this->basePostOptions = [
-            'CURLOPT_TIMEOUT' => 15,
-            'HEADERS' => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $AuthStr
-            ]
-        ];
-
+        parent::__construct($MainInstance, $auth);
     }
-    
+
     /**
      * Fetches Payment details
      *
@@ -37,8 +25,10 @@ class Payment extends Controller {
     public function getDetails($merchantPaymentId)
     {
         $main = $this->MainInst;
+        $endpoint = '/v2' . $this->main()->GetEndpoint('CODE') . $main->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
         $url = $this->api_url . $main->GetEndpoint('CODE') . $main->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
-        return json_decode(HttpGet($url, [], $this->basePostOptions), true);
+        $opts = $this->HmacCallOpts('GET', $endpoint);
+        return json_decode(HttpGet($url, [], $opts), true);
     }
 
     /**
@@ -53,9 +43,10 @@ class Payment extends Controller {
      */
     public function cancel($merchantPaymentId)
     {
-        $main = $this->MainInst;
-        $url = $this->api_url . $main->GetEndpoint("PAYMENT") . "/$merchantPaymentId";
-        return json_decode(HttpDelete($url, [], $this->basePostOptions), true);
+        $endpoint = '/v2' . $this->main()->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
+        $url = $this->api_url . $this->main()->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
+        $opts = $this->HmacCallOpts('DELETE', $endpoint);
+        return json_decode(HttpDelete($url, [], $opts), true);
     }
 
     /**
@@ -69,9 +60,6 @@ class Payment extends Controller {
     public function capture($dataOverride = [])
     {
         $main = $this->MainInst;
-        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('PAYMENT') . "/capture";
-        $options = $this->basePostOptions;
-        $options['CURLOPT_TIMEOUT'] = 30;
         $data = [];
         $data["merchantPaymentId"] = $main->payload->get_merchant_payment_id();
         $data["amount"] = $main->payload->get_amount();
@@ -79,12 +67,16 @@ class Payment extends Controller {
         $data["requestedAt"] = $main->payload->get_requested_at();
         $data["orderDescription"] = $main->payload->get_order_description();
         $data = array_merge($data, $dataOverride);
+        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('PAYMENT') . "/capture";
+        $endpoint = '/v2' . $this->main()->GetEndpoint('PAYMENT') . "/capture";
+        $options = $this->HmacCallOpts('POST', $endpoint, 'application/json;charset=UTF-8;', $data);
+        $options['CURLOPT_TIMEOUT'] = 30;
         return json_decode(HttpPost($url, $data, $options), true);
     }
 
     /**
      * For payments to be updated with amount after creation,
-     * This api is used in case, the merchant wants to cancel 
+     * This api is used in case the merchant wants to cancel 
      * the payment authorization because of cancellation of 
      * the order by the user.
      *
@@ -94,16 +86,16 @@ class Payment extends Controller {
     public function revert($dataOverride = [])
     {
         $main = $this->MainInst;
-        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('PAYMENT') . "/capture";
-        $options = $this->basePostOptions;
-        $options['CURLOPT_TIMEOUT'] = 30;
         $data = [];
         $data["merchantRevertId"] = $main->payload->get_merchant_revert_id();
         $data["paymentId"] = $main->payload->get_merchant_payment_id();
         $data["requestedAt"] = $main->payload->get_requested_at();
         $data["reason"] = $main->payload->get_reason();
         $data = array_merge($data, $dataOverride);
+        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('PAYMENT') . "preauthorize/revert";
+        $endpoint = '/v2' . $this->main()->GetEndpoint('PAYMENT') . "preauthorize/revert";
+        $options = $this->HmacCallOpts('POST', $endpoint, 'application/json;charset=UTF-8;', $data);
+        $options['CURLOPT_TIMEOUT'] = 30;
         return json_decode(HttpPost($url, $data, $options), true);
     }
-
 }

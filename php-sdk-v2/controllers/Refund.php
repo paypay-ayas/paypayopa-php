@@ -1,11 +1,9 @@
 <?php
 
-class Refund
+use PaypaySdk\Controller;
+
+class Refund extends Controller
 {
-    private $api_url;
-    private $MainInst;
-    private $auth;
-    private $basePostOptions;
     /**
      * Initializes Code class to manage creation and deletion of data for QR Code generation
      *
@@ -14,17 +12,7 @@ class Refund
      */
     public function __construct($MainInstance, $auth)
     {
-        $this->MainInst = $MainInstance;
-        $this->api_url = $this->MainInst->getConfig('API_URL');
-        $this->auth = $auth;
-        $AuthStr = HttpBasicAuthStr($this->auth['API_KEY'], $this->auth['API_SECRET']);
-        $this->basePostOptions = [
-            'CURLOPT_TIMEOUT' => 15,
-            'HEADERS' => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $AuthStr
-            ]
-        ];
+        parent::__construct($MainInstance, $auth);
     }
     /**
      * Refund a payment
@@ -57,6 +45,8 @@ class Refund
     {
         $main = $this->MainInst;
         $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND') . "/$merchantRefundId";
-        return json_decode(HttpGet($url, [], $this->basePostOptions), true);
+        $endpoint = '/v2' . $main->GetEndpoint('PAYMENT') . "/$merchantRefundId";
+        $opts = $this->HmacCallOpts('GET', $endpoint);
+        return json_decode(HttpGet($url, [], $opts), true);
     }
 }
