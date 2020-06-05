@@ -17,12 +17,39 @@ class Payment extends Controller
     }
 
     /**
+     * Create a direct debit payment and start the money transfer.
+     *
+     * @param array $dataOverride Payload request array.
+     * @return mixed
+     */
+    public function createPayment($dataOverride = [], $agreeSimilarTransaction = false)
+    {
+        $data = [];
+        $data['merchantPaymentId'] = $this->MainInst->payload->get_merchant_payment_id();
+        $data['amount'] = $this->MainInst->payload->get_amount();
+        $data['userAuthorizationId'] = $this->MainInst->payload->get_userAuthorizationId();
+        $data['orderItems'] = $this->MainInst->payload->get_order_items();
+        $data['requestedAt'] = $this->MainInst->payload->get_requested_at() ? $this->MainInst->payload->get_requested_at() : time();
+        $data = array_merge($data, $dataOverride);
+        $url = $this->api_url . $this->main()->GetEndpoint('PAYMENT');
+        $endpoint = '/v2' . $this->main()->GetEndpoint('PAYMENT');
+        $options = $this->HmacCallOpts('POST', $endpoint, 'application/json;charset=UTF-8;', $data);
+        $options['CURLOPT_TIMEOUT'] = 30;
+        if ($agreeSimilarTransaction) {
+            $response = HttpRequest('POST', $url, ['agreeSimilarTransaction' => true], $data, $options);
+            return json_decode($response, true);
+        } else {
+            return json_decode(HttpPost($url, $data, $options), true);
+        }
+    }
+
+    /**
      * Fetches Payment details
      *
      * @param String $merchantPaymentId The unique payment transaction id provided by merchant
      * @return mixed
      */
-    public function getDetails($merchantPaymentId)
+    public function getPaymentDetails($merchantPaymentId)
     {
         $main = $this->MainInst;
         $endpoint = '/v2' . $this->main()->GetEndpoint('CODE') . $main->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
@@ -41,7 +68,7 @@ class Payment extends Controller
      * @param String $merchantPaymentId The unique payment transaction id provided by merchant
      * @return void
      */
-    public function cancel($merchantPaymentId)
+    public function cancelPayment($merchantPaymentId)
     {
         $endpoint = '/v2' . $this->main()->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
         $url = $this->api_url . $this->main()->GetEndpoint('PAYMENT') . "/$merchantPaymentId";
@@ -57,7 +84,7 @@ class Payment extends Controller
      * @param array $dataOverride Payload request array.
      * @return void
      */
-    public function capture($dataOverride = [])
+    public function capturePaymentAuth($dataOverride = [])
     {
         $main = $this->MainInst;
         $data = [];
@@ -83,7 +110,7 @@ class Payment extends Controller
      * @param array $dataOverride Payload request array.
      * @return mixed
      */
-    public function revert($dataOverride = [])
+    public function revertAuth($dataOverride = [])
     {
         $main = $this->MainInst;
         $data = [];

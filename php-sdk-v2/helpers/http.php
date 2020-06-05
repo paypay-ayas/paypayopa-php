@@ -5,7 +5,7 @@
  *
  * @param String $method Type of HTTP request
  * @param String $url Request URL
- * @param boolean $URLparams URL/GET Parameters to added
+ * @param array $URLparams URL/GET Parameters to added
  * @param boolean $body Request Body/POST Payload 
  * @param array $options Request options
  * @return void

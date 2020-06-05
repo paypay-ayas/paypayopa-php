@@ -65,9 +65,9 @@ $data = $resp['data'];
         <div class="row">
             <div class="col-md-8">
                 <h1> Order Created</h1>
-                <textarea name="" id="" cols="30" rows="10">
+                <!--<textarea name="" id="" cols="30" rows="10">
                     <?= json_encode($resp) ?>
-                </textarea>
+                </textarea>-->
                 <iframe src="<?= $data['url'] ?>" width="100%" height="1024px" frameborder="0"></iframe>
 
             </div>

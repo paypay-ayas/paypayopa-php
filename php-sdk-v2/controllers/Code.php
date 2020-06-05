@@ -21,7 +21,7 @@ class Code extends Controller
      * @param array $dataOverride Payload request array.
      * @return mixed
      */
-    public function create($dataOverride = [])
+    public function createQRCode($dataOverride = [])
     {
         $url = $this->api_url . $this->main()->GetEndpoint('CODE');
         $data = [];
@@ -45,7 +45,7 @@ class Code extends Controller
      * @param String $codeId
      * @return mixed
      */
-    public function delete($codeId)
+    public function deleteQRCode($codeId)
     {
         $endpoint = '/v2' . $this->main()->GetEndpoint('CODE'). "/$codeId";
         

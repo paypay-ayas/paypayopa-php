@@ -20,7 +20,7 @@ class Refund extends Controller
      * @param array $dataOverride Payload request array.
      * @return void
      */
-    public function create($dataOverride = [])
+    public function refundPayment($dataOverride = [])
     {
         $main = $this->MainInst;
         $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND');
@@ -33,6 +33,10 @@ class Refund extends Controller
         $data["requestedAt"] = $main->payload->get_requested_at();
         $data["reason"] = $main->payload->get_reason();
         $data = array_merge($data, $dataOverride);
+        $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND');
+        $endpoint = '/v2' . $main->GetEndpoint('REFUND');
+        $options = $this->HmacCallOpts('POST', $endpoint, 'application/json;charset=UTF-8;', $data);
+        $options['CURLOPT_TIMEOUT'] = 30;
         return json_decode(HttpPost($url, $data, $options), true);
     }
 
@@ -41,11 +45,11 @@ class Refund extends Controller
      * @param String $merchantRefundId The unique refund transaction id provided by merchant
      * @return void
      */
-    public function getDetails($merchantRefundId)
+    public function getRefundDetails($merchantRefundId)
     {
         $main = $this->MainInst;
         $url = $main->GetConfig('API_URL') . $main->GetEndpoint('REFUND') . "/$merchantRefundId";
-        $endpoint = '/v2' . $main->GetEndpoint('PAYMENT') . "/$merchantRefundId";
+        $endpoint = '/v2' . $main->GetEndpoint('REFUND') . "/$merchantRefundId";
         $opts = $this->HmacCallOpts('GET', $endpoint);
         return json_decode(HttpGet($url, [], $opts), true);
     }
