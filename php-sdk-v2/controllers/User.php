@@ -40,7 +40,7 @@ class User extends Controller
             $userAuthorizationId = $this->userAuthorizationId;
         }
         $url = $this->api_url . $this->main()->GetEndpoint('USER_AUTH') . "/$userAuthorizationId";
-        $endpoint = 'v2' . $this->main()->GetEndpoint('USER_AUTH') . "/$userAuthorizationId";
+        $endpoint = '/v2' . $this->main()->GetEndpoint('USER_AUTH') . "/$userAuthorizationId";
         $opts = $this->HmacCallOpts('DELETE', $endpoint);
         $response = HttpDelete($url, [], $opts);
         return json_decode($response, true);
@@ -58,7 +58,7 @@ class User extends Controller
             $userAuthorizationId = $this->userAuthorizationId;
         }
         $url = $this->api_url . $this->main()->GetEndpoint('USER_AUTH');
-        $endpoint = 'v2' . $this->main()->GetEndpoint('USER_AUTH');
+        $endpoint = '/v2' . $this->main()->GetEndpoint('USER_AUTH');
         $opts = $this->HmacCallOpts('GET', $endpoint);
         $response = HttpGet($url, ['userAuthorizationId' => $userAuthorizationId], $opts);
         return json_decode($response, true);
@@ -76,7 +76,7 @@ class User extends Controller
             $userAuthorizationId = $this->userAuthorizationId;
         }
         $url = $this->api_url . $this->main()->GetEndpoint('USER_PROFILE_SECURE');
-        $endpoint = 'v2' . $this->main()->GetEndpoint('USER_PROFILE_SECURE');
+        $endpoint = '/v2' . $this->main()->GetEndpoint('USER_PROFILE_SECURE');
         $opts = $this->HmacCallOpts('GET', $endpoint);
         $response = HttpGet($url, ['userAuthorizationId' => $userAuthorizationId], $opts);
         return json_decode($response, true);
